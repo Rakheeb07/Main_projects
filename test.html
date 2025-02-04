@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background:#8b48d7;
+            background-image: url('wearther.jpg'); /* Add your image URL here */
+            background-repeat: no-repeat;
+            background-attachment: fixed; 
+            background-size: cover;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .weather-container {
+            width: 350px;
+            padding: 20px;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        input {
+            width: 80%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px;
+            background: #6a11cb;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #8b48d7;
+        }
+        h2, p {
+            color: #fff;
+        }
+        /* Glass Effect */
+        #weather-info {
+            width: 300px;
+            padding: 20px;
+            margin: 20px auto;
+            border-radius: 10px;
+
+            /* Glass Effect */
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+
+            /* Border & Shadow */
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+
+            /* Text */
+            color: white;
+            text-align: center;
+            font-size: 18px;
+
+            /* Ensure Visibility */
+            display: block; /* Force display */
+            min-height: 150px; /* Prevent collapse */
+        }
+        #weather-icon {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="weather-container">
+        <h1>Weather App</h1>
+        <input type="text" id="city" placeholder="Enter city name">
+        <button onclick="getWeather()">Get Weather</button>
+        <div id="weather-info">
+            <h2 id="location"></h2>
+            <p><strong>Temperature:</strong> <span id="temp"></span>°C</p>
+            <p><strong>Humidity:</strong> <span id="humidity"></span>%</p>
+            <p><strong>Wind Speed:</strong> <span id="wind"></span> km/h</p>
+            <p><strong>Precipitation:</strong> <span id="precipitation"></span> mm</p>
+        </div>
+    </div>
+
+    <script>
+        async function getWeather() {
+            const apiKey = 'b1513873159e6fd53976cfa317afc870';  // Replace with your API key
+            const city = document.getElementById("city").value;
+            if (!city) {
+                alert("Please enter a city name!");
+                return;
+            }
+
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.cod !== 200) {
+                    alert("City not found! Try again.");
+                    return;
+                }
+
+                document.getElementById("location").textContent = data.name + ", " + data.sys.country;
+                document.getElementById("temp").textContent = data.main.temp;
+                document.getElementById("humidity").textContent = data.main.humidity;
+                document.getElementById("wind").textContent = data.wind.speed;
+
+                const precipitation = data.rain ? data.rain["1h"] || "0" : "0"; 
+                document.getElementById("precipitation").textContent = precipitation;
+
+            } catch (error) {
+                alert("Error fetching weather data. Please try again.");
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+</html>
